@@ -12,19 +12,20 @@ const toSlug = (value: string) =>
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
+  const { id } = await params;
   const body = await request.json();
   const { name, slug, price, description, icon, features } = body || {};
   const finalSlug = slug ? slug : name ? toSlug(name) : undefined;
 
   const service = await prisma.service.update({
-    where: { id: params.id },
+    where: { id },
     data: {
       name: name || undefined,
       slug: finalSlug || undefined,
@@ -40,13 +41,14 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await requireAdmin();
   if (!session) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  await prisma.service.delete({ where: { id: params.id } });
+  const { id } = await params;
+  await prisma.service.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }
