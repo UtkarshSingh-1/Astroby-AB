@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { EMAIL_FROM, mailer } from '@/lib/mailer';
+import { getMailer } from '@/lib/mailer';
 import { generateOTP, otpExpiry, secondsUntilResend } from '@/lib/otp';
 
 export async function POST(req: Request) {
@@ -45,8 +45,13 @@ export async function POST(req: Request) {
     },
   });
 
+  const { mailer, emailFrom } = getMailer();
+  if (!mailer || !emailFrom) {
+    return NextResponse.json({ message: 'SMTP not configured.' }, { status: 500 });
+  }
+
   await mailer.sendMail({
-    from: EMAIL_FROM,
+    from: emailFrom,
     to: email,
     subject: 'Your AstrobyAB signup OTP',
     text: `Your OTP is ${otp}. It expires in 10 minutes.`,
