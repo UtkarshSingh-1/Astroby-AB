@@ -5,11 +5,6 @@ import { prisma } from '@/lib/prisma';
 const razorpayKeyId = process.env.RAZORPAY_KEY_ID || '';
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || '';
 
-const razorpay = new Razorpay({
-  key_id: razorpayKeyId,
-  key_secret: razorpayKeySecret,
-});
-
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -31,6 +26,11 @@ export async function POST(request: Request) {
     if (!razorpayKeyId || !razorpayKeySecret) {
       return NextResponse.json({ message: 'Razorpay keys not configured' }, { status: 500 });
     }
+
+    const razorpay = new Razorpay({
+      key_id: razorpayKeyId,
+      key_secret: razorpayKeySecret,
+    });
 
     const service = await prisma.service.findUnique({ where: { id: serviceId } });
     if (!service) {
