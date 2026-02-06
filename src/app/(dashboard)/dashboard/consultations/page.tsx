@@ -1,5 +1,6 @@
-import UserConsultations from '@/pages/dashboard/user/Consultations';
+import UserConsultations from '@/app-pages/dashboard/user/Consultations';
 
 export default function Page() {
   return <UserConsultations />;
 }
+

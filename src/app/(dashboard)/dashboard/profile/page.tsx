@@ -1,5 +1,6 @@
-import Profile from '@/pages/Profile';
+import Profile from '@/app-pages/Profile';
 
 export default function Page() {
   return <Profile />;
 }
+

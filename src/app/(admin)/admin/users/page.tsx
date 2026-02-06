@@ -1,5 +1,6 @@
-import AdminUsers from '@/pages/dashboard/admin/Users';
+import AdminUsers from '@/app-pages/dashboard/admin/Users';
 
 export default function Page() {
   return <AdminUsers />;
 }
+
