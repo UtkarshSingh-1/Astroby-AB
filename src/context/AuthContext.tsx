@@ -27,11 +27,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const mappedUser: User | null = session?.user
     ? {
-        id: (session.user as any).id,
+        id: session.user.id || '',
         email: session.user.email || '',
         name: session.user.name || undefined,
         image: session.user.image || undefined,
-        role: ((session.user as any).role || 'USER') as User['role'],
+        role: (session.user.role || 'USER') as User['role'],
         createdAt: new Date(),
         updatedAt: new Date(),
       }

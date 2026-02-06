@@ -26,10 +26,6 @@ const AdminUsers = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
-
   const loadUsers = async () => {
     const response = await fetch('/api/admin/users');
     if (!response.ok) {
@@ -38,6 +34,10 @@ const AdminUsers = () => {
     const data = await response.json();
     setUsers(data);
   };
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
   const filteredUsers = users.filter(u => 
     u.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||

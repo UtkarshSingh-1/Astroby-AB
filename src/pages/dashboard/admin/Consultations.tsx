@@ -44,10 +44,6 @@ const AdminConsultations = () => {
   const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
   const [notes, setNotes] = useState('');
 
-  useEffect(() => {
-    loadConsultations();
-  }, []);
-
   const loadConsultations = async () => {
     const response = await fetch('/api/admin/consultations');
     if (!response.ok) {
@@ -56,6 +52,10 @@ const AdminConsultations = () => {
     const data = await response.json();
     setConsultations(data);
   };
+
+  useEffect(() => {
+    loadConsultations();
+  }, []);
 
   const handleUpdateStatus = async (id: string, status: 'pending' | 'completed' | 'failed' | 'refunded') => {
     const response = await fetch(`/api/admin/consultations/${id}`, {

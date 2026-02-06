@@ -1,5 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import type { NextAuthOptions } from 'next-auth';
+import type { NextAuthOptions, User as AuthUser } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           image: user.image,
           role: user.role,
-        } as any;
+        } as AuthUser;
       },
     }),
   ],
@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
         return true;
       }
 
-      const email = (profile as any)?.email as string | undefined;
+      const email = typeof profile?.email === 'string' ? profile.email : undefined;
       if (!email || !account.providerAccountId) {
         return false;
       }
@@ -80,15 +80,16 @@ export const authOptions: NextAuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = (user as any).id;
-        token.role = (user as any).role || 'USER';
+        const typedUser = user as { id?: string; role?: 'USER' | 'ADMIN' };
+        token.id = typedUser.id;
+        token.role = typedUser.role || 'USER';
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role || 'USER';
+        session.user.id = token.id;
+        session.user.role = token.role || 'USER';
       }
       return session;
     },

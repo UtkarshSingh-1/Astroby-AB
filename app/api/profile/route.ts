@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = (session.user as any).id as string | undefined;
+  const userId = session.user?.id;
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -38,7 +38,7 @@ export async function PUT(req: Request) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId = (session.user as any).id as string | undefined;
+  const userId = session.user?.id;
   if (!userId) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

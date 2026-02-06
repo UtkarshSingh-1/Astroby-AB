@@ -1,5 +1,30 @@
 import type { RazorpayOrder, PaymentVerification } from '@/types';
 
+type RazorpayHandlerResponse = {
+  razorpay_payment_id: string;
+  razorpay_order_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayOptions = {
+  key?: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill: { name: string; email: string; contact?: string };
+  handler: (response: RazorpayHandlerResponse) => void;
+  modal: { ondismiss: () => void };
+  theme: { color: string };
+};
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+  }
+}
+
 class PaymentService {
   // Process consultation payment
   async processConsultationPayment(
@@ -101,16 +126,16 @@ class PaymentService {
     order: RazorpayOrder,
     userDetails: { name: string; email: string; contact?: string },
     keyId: string | undefined,
-    onSuccess: (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void,
+    onSuccess: (response: RazorpayHandlerResponse) => void,
     onFailure: (error: Error) => void
   ): Promise<void> {
     const loaded = await this.loadRazorpayScript();
-    if (!loaded || !(window as any).Razorpay) {
+    if (!loaded || !window.Razorpay) {
       onFailure(new Error('Razorpay SDK failed to load'));
       return;
     }
 
-    const options = {
+    const options: RazorpayOptions = {
       key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: order.amount,
       currency: order.currency,
@@ -129,7 +154,7 @@ class PaymentService {
       theme: { color: '#7f1d1d' },
     };
 
-    const razorpay = new (window as any).Razorpay(options);
+    const razorpay = new window.Razorpay(options);
     razorpay.open();
   }
 }

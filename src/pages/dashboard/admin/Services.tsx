@@ -71,15 +71,15 @@ const AdminServices = () => {
     features: '',
   });
 
-  useEffect(() => {
-    loadServices();
-  }, []);
-
   const loadServices = async () => {
     const response = await fetch('/api/services');
     const data = await response.json();
     setServices(data);
   };
+
+  useEffect(() => {
+    loadServices();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({

@@ -23,7 +23,7 @@ import {
 
 const Profile = () => {
   const { user } = useAuth();
-  const [_profile, setProfile] = useState<UserProfile | null>(null);
+  const [, setProfile] = useState<UserProfile | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -121,7 +121,7 @@ const Profile = () => {
       }
       
       toast.success('Profile updated successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update profile');
     }
     

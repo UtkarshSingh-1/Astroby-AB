@@ -14,7 +14,7 @@ export default function AdminGuard({ children }: { children: React.ReactNode }) 
       signIn(undefined, { callbackUrl: '/signin?redirectTo=/admin' });
       return;
     }
-    const role = (session.user as any).role;
+    const role = session.user.role;
     if (role !== 'ADMIN') {
       router.replace('/dashboard');
     }
