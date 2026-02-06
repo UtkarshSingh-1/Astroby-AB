@@ -50,7 +50,7 @@ const BookConsultation = () => {
       setServices(data);
       
       // Pre-select service if passed from service detail page
-      const preSelectedService = searchParams.get('serviceId');
+      const preSelectedService = searchParams?.get('serviceId');
       if (preSelectedService) {
         setSelectedService(preSelectedService);
       }
