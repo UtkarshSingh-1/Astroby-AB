@@ -62,6 +62,7 @@ export async function POST(request: Request) {
         serviceName: service.name,
         price: service.price,
         paymentStatus: 'pending',
+        consultationStatus: 'PENDING',
         birthPlace,
         birthDate: birthDate ? new Date(birthDate) : undefined,
         birthTime,

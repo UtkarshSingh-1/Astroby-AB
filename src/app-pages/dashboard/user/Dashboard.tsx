@@ -38,8 +38,8 @@ const UserDashboard = () => {
 
       setStats({
         totalConsultations: userConsultations.length,
-        completedConsultations: userConsultations.filter((c: Consultation) => c.paymentStatus === 'completed').length,
-        pendingConsultations: userConsultations.filter((c: Consultation) => c.paymentStatus === 'pending').length,
+        completedConsultations: userConsultations.filter((c: Consultation) => c.consultationStatus === 'COMPLETED').length,
+        pendingConsultations: userConsultations.filter((c: Consultation) => c.consultationStatus !== 'COMPLETED').length,
       });
     };
     
@@ -237,13 +237,11 @@ const UserDashboard = () => {
                     </div>
                     <div className="flex items-center gap-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        consultation.paymentStatus === 'completed'
-                          ? 'bg-green-100 text-green-800'
-                          : consultation.paymentStatus === 'pending'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-red-100 text-red-800'
+                        consultation.consultationStatus === 'COMPLETED'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-sky-100 text-sky-800'
                       }`}>
-                        {consultation.paymentStatus.charAt(0).toUpperCase() + consultation.paymentStatus.slice(1)}
+                        {consultation.consultationStatus === 'COMPLETED' ? 'Completed' : 'Pending'}
                       </span>
                       <span className="font-semibold text-stone-900">₹{consultation.price}</span>
                     </div>

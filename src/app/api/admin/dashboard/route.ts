@@ -9,16 +9,18 @@ export async function GET() {
   }
 
   const totalUsers = await prisma.user.count({ where: { role: 'USER' } });
-  const totalConsultations = await prisma.consultation.count();
+  const totalConsultations = await prisma.consultation.count({
+    where: { paymentStatus: 'completed' },
+  });
   const totalRevenueAgg = await prisma.consultation.aggregate({
     _sum: { price: true },
     where: { paymentStatus: 'completed' },
   });
   const pendingConsultations = await prisma.consultation.count({
-    where: { paymentStatus: 'pending' },
+    where: { consultationStatus: 'PENDING', paymentStatus: 'completed' },
   });
   const completedConsultations = await prisma.consultation.count({
-    where: { paymentStatus: 'completed' },
+    where: { consultationStatus: 'COMPLETED', paymentStatus: 'completed' },
   });
 
   return NextResponse.json({

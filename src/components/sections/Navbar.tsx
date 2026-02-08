@@ -17,7 +17,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from '@/components/ui/sheet';
-import { Menu, Star, User, LogOut } from 'lucide-react';
+import { Menu, User, LogOut } from 'lucide-react';
 
 const Navbar = () => {
   const { isAuthenticated, isAdmin, logout } = useAuth();
@@ -56,9 +56,11 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-red-900 rounded-full flex items-center justify-center">
-              <Star className="h-5 w-5 text-amber-400" />
-            </div>
+            <img
+              src="/logo.jpeg"
+              alt="AstrobyAB"
+              className="w-12 h-12 rounded-full object-cover"
+            />
             <span className={`text-xl font-bold ${isScrolled ? 'text-red-950' : 'text-white'}`}>
               AstrobyAB
             </span>
@@ -105,8 +107,8 @@ const Navbar = () => {
                   variant="outline"
                   className={`flex items-center gap-2 ${
                     isScrolled
-                      ? 'border-red-900 text-red-900 hover:bg-red-50'
-                      : 'border-white text-white hover:bg-white/10'
+                      ? 'border-red-900 text-red-900 bg-transparent hover:bg-red-50'
+                      : 'border-white text-white bg-transparent hover:bg-white/10'
                   }`}
                   onClick={handleLogout}
                 >
@@ -147,9 +149,11 @@ const Navbar = () => {
             <SheetContent side="right" className="w-80 bg-red-950 border-red-900">
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-2 mb-8">
-                  <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
-                    <Star className="h-5 w-5 text-red-950" />
-                  </div>
+                  <img
+                    src="/logo.jpeg"
+                    alt="AstrobyAB"
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
                   <span className="text-xl font-bold text-white">AstrobyAB</span>
                 </div>
 

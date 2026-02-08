@@ -3,65 +3,107 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { kundliService } from '@/services/kundli';
-import type { KundliData } from '@/types';
+import type { KundliResult } from '@/types';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
-import { 
-  Star, 
-  Download, 
-  Info,
-  Sun,
-  Moon,
-  ArrowUp
-} from 'lucide-react';
+import { Star, Download, Info, Sun, Moon, ArrowUp } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Kundli = () => {
   const { user } = useAuth();
-  const [kundli, setKundli] = useState<KundliData | null>(null);
+  const [kundli, setKundli] = useState<KundliResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [cacheKey, setCacheKey] = useState<string | undefined>(undefined);
+  const [saveToProfile, setSaveToProfile] = useState(true);
+  const [formData, setFormData] = useState({
+    dateOfBirth: '',
+    timeOfBirth: '',
+    placeOfBirth: '',
+    latitude: '',
+    longitude: '',
+    timezone: 'UTC',
+  });
 
   useEffect(() => {
     const loadKundli = async () => {
-      if (!user) return;
-
-      const response = await fetch('/api/profile');
-      if (!response.ok) {
-        setLoading(false);
-        return;
-      }
-      const data = await response.json();
-      const profile = data?.profile;
-
-      if (!profile?.dateOfBirth || !profile?.timeOfBirth || !profile?.birthPlace) {
-        setKundli(null);
+      if (!user) {
         setLoading(false);
         return;
       }
 
-      const latitude = profile?.latitude ? Number(profile.latitude) : 0;
-      const longitude = profile?.longitude ? Number(profile.longitude) : 0;
+      const profileResponse = await fetch('/api/profile');
+      if (profileResponse.ok) {
+        const data = await profileResponse.json();
+        const profile = data?.profile;
+        setFormData((prev) => ({
+          ...prev,
+          dateOfBirth: profile?.dateOfBirth
+            ? new Date(profile.dateOfBirth).toISOString().split('T')[0]
+            : '',
+          timeOfBirth: profile?.timeOfBirth || '',
+          placeOfBirth: profile?.birthPlace || '',
+          latitude: profile?.latitude || '',
+          longitude: profile?.longitude || '',
+        }));
+      }
 
-      const newKundli = await kundliService.generateKundli(
-        user.id,
-        new Date(profile.dateOfBirth),
-        profile.timeOfBirth,
-        profile.birthPlace,
-        Number.isFinite(latitude) ? latitude : 0,
-        Number.isFinite(longitude) ? longitude : 0
-      );
-      setKundli(newKundli);
-
+      const latest = await kundliService.getLatest();
+      setKundli(latest.result || null);
+      setCacheKey(latest.cacheKey);
       setLoading(false);
     };
-    
+
     loadKundli();
   }, [user]);
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleGenerate = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!formData.dateOfBirth || !formData.timeOfBirth || !formData.placeOfBirth) {
+      toast.error('Please fill in all required fields.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const result = await kundliService.generateKundli({
+        dateOfBirth: formData.dateOfBirth,
+        timeOfBirth: formData.timeOfBirth,
+        placeOfBirth: formData.placeOfBirth,
+        latitude: Number(formData.latitude || 0),
+        longitude: Number(formData.longitude || 0),
+        timezone: formData.timezone || 'UTC',
+        saveToProfile,
+      });
+      setKundli(result.result);
+      setCacheKey(result.cacheKey);
+      toast.success('Kundli generated successfully.');
+    } catch (error) {
+      toast.error('Failed to generate Kundli.');
+      console.error(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleDownload = () => {
-    toast.success('Kundli PDF download started!');
+    if (!cacheKey) {
+      toast.error('Generate your Kundli first.');
+      return;
+    }
+    window.location.href = `/api/kundli/pdf?cacheKey=${cacheKey}`;
   };
 
   if (loading) {
@@ -72,15 +114,110 @@ const Kundli = () => {
     );
   }
 
+  return (
+    <Card>
+      <CardContent className="p-10 text-center">
+        <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Star className="h-8 w-8 text-stone-400" />
+        </div>
+        <h3 className="text-xl font-semibold text-stone-900 mb-2">Kundli Coming Soon</h3>
+        <p className="text-stone-600 mb-6">
+          We are working on accurate chart generation and PDF reports. Please check back soon.
+        </p>
+        <Button variant="outline" className="border-red-900 text-red-900" disabled>
+          Get Kundli
+        </Button>
+      </CardContent>
+    </Card>
+  );
+
   if (!kundli) {
     return (
       <Card>
-        <CardContent className="p-8 text-center">
-          <div className="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Star className="h-8 w-8 text-stone-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-stone-900 mb-2">No Kundli Found</h3>
-          <p className="text-stone-600 mb-4">Please complete your profile with birth details to generate your Kundli.</p>
+        <CardHeader>
+          <CardTitle>Generate Your Kundli</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleGenerate} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dateOfBirth">Date of Birth *</Label>
+                <Input
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  type="date"
+                  value={formData.dateOfBirth}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="timeOfBirth">Time of Birth *</Label>
+                <Input
+                  id="timeOfBirth"
+                  name="timeOfBirth"
+                  type="time"
+                  value={formData.timeOfBirth}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label htmlFor="placeOfBirth">Place of Birth *</Label>
+                <Input
+                  id="placeOfBirth"
+                  name="placeOfBirth"
+                  value={formData.placeOfBirth}
+                  onChange={handleInputChange}
+                  placeholder="City, State, Country"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="latitude">Latitude</Label>
+                <Input
+                  id="latitude"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleInputChange}
+                  placeholder="e.g. 25.3176"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="longitude">Longitude</Label>
+                <Input
+                  id="longitude"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleInputChange}
+                  placeholder="e.g. 82.9739"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="timezone">Timezone</Label>
+                <Input
+                  id="timezone"
+                  name="timezone"
+                  value={formData.timezone}
+                  onChange={handleInputChange}
+                  placeholder="e.g. Asia/Kolkata"
+                />
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-stone-600">
+              <input
+                type="checkbox"
+                checked={saveToProfile}
+                onChange={(event) => setSaveToProfile(event.target.checked)}
+              />
+              Save these details to my profile
+            </label>
+
+            <Button type="submit" className="bg-red-900 hover:bg-red-800" disabled={submitting}>
+              {submitting ? 'Generating...' : 'Generate Kundli'}
+            </Button>
+          </form>
         </CardContent>
       </Card>
     );
@@ -88,7 +225,6 @@ const Kundli = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -107,7 +243,6 @@ const Kundli = () => {
         </Button>
       </motion.div>
 
-      {/* Birth Details */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -122,27 +257,26 @@ const Kundli = () => {
               <div>
                 <p className="text-stone-500 text-sm">Date of Birth</p>
                 <p className="font-semibold text-stone-900">
-                  {new Date(kundli.dateOfBirth).toLocaleDateString('en-IN')}
+                  {new Date(kundli.input.dateOfBirth).toLocaleDateString('en-IN')}
                 </p>
               </div>
               <div>
                 <p className="text-stone-500 text-sm">Time of Birth</p>
-                <p className="font-semibold text-stone-900">{kundli.timeOfBirth}</p>
+                <p className="font-semibold text-stone-900">{kundli.input.timeOfBirth}</p>
               </div>
               <div>
                 <p className="text-stone-500 text-sm">Place of Birth</p>
-                <p className="font-semibold text-stone-900">{kundli.placeOfBirth}</p>
+                <p className="font-semibold text-stone-900">{kundli.input.placeOfBirth}</p>
               </div>
               <div>
                 <p className="text-stone-500 text-sm">Timezone</p>
-                <p className="font-semibold text-stone-900">{kundli.timezone}</p>
+                <p className="font-semibold text-stone-900">{kundli.input.timezone}</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </motion.div>
 
-      {/* Key Details */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -170,16 +304,16 @@ const Kundli = () => {
         })}
       </motion.div>
 
-      {/* Tabs */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
         <Tabs defaultValue="planets" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="planets">Planetary Positions</TabsTrigger>
             <TabsTrigger value="houses">Houses (Bhavas)</TabsTrigger>
+            <TabsTrigger value="raw">Raw JSON</TabsTrigger>
           </TabsList>
 
           <TabsContent value="planets" className="mt-6">
@@ -206,17 +340,9 @@ const Kundli = () => {
                       {kundli.planets.map((planet, index) => (
                         <tr key={index} className="border-b border-stone-100">
                           <td className="py-3 px-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">{kundliService.getPlanetSymbol(planet.planet)}</span>
-                              <span className="font-medium text-stone-900">{planet.planet}</span>
-                            </div>
+                            <span className="font-medium text-stone-900">{planet.planet}</span>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-2">
-                              <span className="text-lg">{kundliService.getSignSymbol(planet.sign)}</span>
-                              <span>{planet.sign}</span>
-                            </div>
-                          </td>
+                          <td className="py-3 px-4">{planet.sign}</td>
                           <td className="py-3 px-4">{planet.degree.toFixed(2)}°</td>
                           <td className="py-3 px-4">{planet.house}</td>
                           <td className="py-3 px-4">
@@ -253,17 +379,14 @@ const Kundli = () => {
                     <div key={index} className="bg-stone-50 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-semibold text-stone-900">House {house.number}</span>
-                        <span className="text-lg">{kundliService.getSignSymbol(house.sign)}</span>
+                        <span className="text-lg">{house.sign}</span>
                       </div>
                       <p className="text-stone-600 text-sm mb-2">{house.sign}</p>
-                      <p className="text-stone-500 text-xs mb-2">
-                        {kundliService.getHouseDescription(house.number)}
-                      </p>
                       {house.planets.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-2">
                           {house.planets.map((planet, i) => (
-                            <span 
-                              key={i} 
+                            <span
+                              key={i}
                               className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs"
                             >
                               {planet}
@@ -277,10 +400,22 @@ const Kundli = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="raw" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Raw JSON</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <pre className="text-xs whitespace-pre-wrap break-words">
+                  {JSON.stringify(kundli, null, 2)}
+                </pre>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </motion.div>
 
-      {/* Disclaimer */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -293,8 +428,8 @@ const Kundli = () => {
               <div>
                 <p className="text-amber-800 text-sm font-medium mb-1">Important Note</p>
                 <p className="text-amber-700 text-sm">
-                  This Kundli is generated using Vedic astrological calculations. For a detailed 
-                  interpretation and personalized guidance, please book a consultation with our expert.
+                  For production accuracy, configure the external astrology provider.
+                  The system is engine-agnostic and can be swapped to Swiss Ephemeris later.
                 </p>
               </div>
             </div>
@@ -306,4 +441,3 @@ const Kundli = () => {
 };
 
 export default Kundli;
-

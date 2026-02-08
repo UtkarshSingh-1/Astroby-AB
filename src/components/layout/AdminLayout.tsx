@@ -11,8 +11,7 @@ import {
   Calendar, 
   LogOut,
   Menu,
-  X,
-  Crown
+  X
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -54,9 +53,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
       >
         <div className="p-6">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
-              <Crown className="h-5 w-5 text-red-950" />
-            </div>
+            <img
+              src="/logo.jpeg"
+              alt="AstrobyAB"
+              className="w-12 h-12 rounded-full object-cover"
+            />
             <div>
               <span className="text-xl font-bold">AstrobyAB</span>
               <p className="text-xs text-amber-400">Admin Panel</p>

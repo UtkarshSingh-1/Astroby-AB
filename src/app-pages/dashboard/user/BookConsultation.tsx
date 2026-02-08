@@ -58,6 +58,33 @@ const BookConsultation = () => {
     loadServices();
   }, [searchParams]);
 
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!user) return;
+      const response = await fetch('/api/profile');
+      if (!response.ok) return;
+      const data = await response.json();
+      const profile = data?.profile;
+      const birthDate = profile?.dateOfBirth
+        ? new Date(profile.dateOfBirth).toISOString().split('T')[0]
+        : '';
+      const birthPlace =
+        profile?.birthPlace ||
+        [profile?.birthCity, profile?.birthCountry].filter(Boolean).join(', ');
+
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || user.name || '',
+        email: prev.email || user.email || '',
+        birthDate: prev.birthDate || birthDate,
+        birthTime: prev.birthTime || profile?.timeOfBirth || '',
+        birthPlace: prev.birthPlace || birthPlace || '',
+      }));
+    };
+
+    loadProfile();
+  }, [user]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({
       ...prev,

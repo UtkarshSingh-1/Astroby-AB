@@ -13,12 +13,13 @@ export async function PATCH(
 
   const { id } = await params;
   const body = await req.json();
-  const { paymentStatus, notes } = body || {};
+  const { paymentStatus, notes, consultationStatus } = body || {};
 
   const updated = await prisma.consultation.update({
     where: { id },
     data: {
       paymentStatus: paymentStatus ?? undefined,
+      consultationStatus: consultationStatus ?? undefined,
       notes: notes ?? undefined,
     },
   });

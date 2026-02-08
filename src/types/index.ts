@@ -88,12 +88,16 @@ export interface Consultation {
   paymentId?: string;
   razorpayOrderId?: string;
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
+  consultationStatus: 'PENDING' | 'COMPLETED';
   consultationDate?: Date;
   birthPlace?: string;
   birthDate?: Date;
   birthTime?: string;
   consultationPurpose?: string;
   notes?: string;
+  reportUrl?: string;
+  reportFileName?: string;
+  reportUploadedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -131,6 +135,38 @@ export interface KundliData {
   sunSign: string;
   moonSign: string;
   createdAt: Date;
+}
+
+export interface KundliResult {
+  input: {
+    dateOfBirth: string;
+    timeOfBirth: string;
+    placeOfBirth: string;
+    latitude: number;
+    longitude: number;
+    timezone: string;
+  };
+  metadata: {
+    engine: string;
+    ayanamsa: string;
+    generatedAt: string;
+  };
+  planets: PlanetPosition[];
+  houses: House[];
+  ascendant: string;
+  nakshatra: string;
+  rashi: string;
+  sunSign: string;
+  moonSign: string;
+  charts?: {
+    d1?: { houses: House[]; ascendant: string };
+    d9?: { houses: House[]; ascendant: string };
+    d10?: { houses: House[]; ascendant: string };
+    bhava?: { houses: House[] };
+  };
+  vimshottariDasha?: unknown;
+  panchang?: unknown;
+  raw?: unknown;
 }
 
 // Auth Types

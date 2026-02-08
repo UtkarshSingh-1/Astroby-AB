@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Star, Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
 import type { Service } from '@/types';
 
 const Footer = () => {
@@ -49,9 +49,11 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
-                <Star className="h-5 w-5 text-red-950" />
-              </div>
+              <img
+                src="/logo.jpeg"
+                alt="AstrobyAB"
+                className="w-12 h-12 rounded-full object-cover"
+              />
               <span className="text-xl font-bold">AstrobyAB</span>
             </Link>
             <p className="text-red-200 text-sm mb-4">

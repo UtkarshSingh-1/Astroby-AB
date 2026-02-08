@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion } from 'framer-motion';
-import { 
-  Users, 
-  Calendar, 
-  IndianRupee, 
+import {
+  Users,
+  Calendar,
+  IndianRupee,
   TrendingUp,
   CheckCircle,
   Clock,
-  Star
+  Star,
 } from 'lucide-react';
 
 const AdminDashboard = () => {
@@ -38,6 +39,7 @@ const AdminDashboard = () => {
       icon: Users,
       color: 'bg-blue-100 text-blue-900',
       trend: '',
+      href: '/admin/users',
     },
     {
       title: 'Total Consultations',
@@ -45,6 +47,7 @@ const AdminDashboard = () => {
       icon: Calendar,
       color: 'bg-purple-100 text-purple-900',
       trend: '',
+      href: '/admin/consultations?status=all',
     },
     {
       title: 'Total Revenue',
@@ -52,6 +55,7 @@ const AdminDashboard = () => {
       icon: IndianRupee,
       color: 'bg-green-100 text-green-900',
       trend: '',
+      href: '/admin/consultations?status=completed',
     },
     {
       title: 'Pending',
@@ -59,6 +63,7 @@ const AdminDashboard = () => {
       icon: Clock,
       color: 'bg-amber-100 text-amber-900',
       trend: '',
+      href: '/admin/consultations?status=pending',
     },
   ];
 
@@ -89,25 +94,27 @@ const AdminDashboard = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-stone-500 text-sm">{stat.title}</p>
-                      <p className="text-3xl font-bold text-stone-900">{stat.value}</p>
-                      {stat.trend && (
-                        <div className="flex items-center gap-1 mt-1">
-                          <TrendingUp className="h-3 w-3 text-green-600" />
-                          <span className="text-green-600 text-xs">{stat.trend}</span>
-                        </div>
-                      )}
+              <Link href={stat.href} className="block">
+                <Card className="transition-shadow hover:shadow-md">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-stone-500 text-sm">{stat.title}</p>
+                        <p className="text-3xl font-bold text-stone-900">{stat.value}</p>
+                        {stat.trend && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <TrendingUp className="h-3 w-3 text-green-600" />
+                            <span className="text-green-600 text-xs">{stat.trend}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
+                        <Icon className="h-6 w-6" />
+                      </div>
                     </div>
-                    <div className={`w-12 h-12 ${stat.color} rounded-lg flex items-center justify-center`}>
-                      <Icon className="h-6 w-6" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
           );
         })}
@@ -199,18 +206,18 @@ const AdminDashboard = () => {
                   <div className="flex items-center justify-between">
                     <span className="text-stone-600">Completion Rate</span>
                     <span className="font-bold text-stone-900">
-                      {stats.totalConsultations > 0 
-                        ? Math.round((stats.completedConsultations / stats.totalConsultations) * 100) 
+                      {stats.totalConsultations > 0
+                        ? Math.round((stats.completedConsultations / stats.totalConsultations) * 100)
                         : 0}%
                     </span>
                   </div>
                   <div className="w-full bg-stone-100 rounded-full h-2 mt-2">
-                    <div 
+                    <div
                       className="bg-green-500 h-2 rounded-full transition-all"
-                      style={{ 
-                        width: `${stats.totalConsultations > 0 
-                          ? (stats.completedConsultations / stats.totalConsultations) * 100 
-                          : 0}%` 
+                      style={{
+                        width: `${stats.totalConsultations > 0
+                          ? (stats.completedConsultations / stats.totalConsultations) * 100
+                          : 0}%`,
                       }}
                     />
                   </div>

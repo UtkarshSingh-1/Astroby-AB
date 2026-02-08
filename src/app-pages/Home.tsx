@@ -3,6 +3,13 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import type { Service } from '@/types';
 import { 
@@ -30,6 +37,8 @@ const iconMap: Record<string, React.ElementType> = {
 
 // Hero Section
 const Hero = () => {
+  const [showKundliSoon, setShowKundliSoon] = useState(false);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-red-950 via-red-900 to-red-950">
       {/* Background Pattern */}
@@ -72,16 +81,15 @@ const Hero = () => {
                 Explore Services
               </Button>
             </Link>
-            <Link href="/signup">
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="border-white text-white hover:bg-white/10 px-8"
-              >
-                <Star className="h-5 w-5 mr-2" />
-                Get Free Kundli
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white text-white bg-transparent hover:bg-white/10 px-8"
+              onClick={() => setShowKundliSoon(true)}
+            >
+              <Star className="h-5 w-5 mr-2" />
+              Get Free Kundli
+            </Button>
           </div>
         </motion.div>
 
@@ -116,6 +124,20 @@ const Hero = () => {
           <div className="w-1.5 h-3 bg-white/50 rounded-full" />
         </div>
       </motion.div>
+
+      <Dialog open={showKundliSoon} onOpenChange={setShowKundliSoon}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Coming Soon</DialogTitle>
+          </DialogHeader>
+          <p className="text-stone-600">
+            Kundli generation is under active development. We’ll notify you as soon as it’s live.
+          </p>
+          <DialogClose asChild>
+            <Button className="mt-4 bg-red-900 hover:bg-red-800">Got it</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
@@ -315,7 +337,7 @@ const CTASection = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-white text-white hover:bg-white/10 px-8"
+                className="border-white text-white bg-transparent hover:bg-white/10 px-8"
               >
                 Contact Us
               </Button>

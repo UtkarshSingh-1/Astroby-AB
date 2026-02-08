@@ -122,20 +122,54 @@ model Consultation {
   paymentId           String?   @unique
   razorpayOrderId     String?   @unique
   paymentStatus       String    @default("pending")
+  consultationStatus  ConsultationStatus @default(PENDING)
   consultationDate    DateTime?
   birthPlace          String?
   birthDate           DateTime?
   birthTime           String?
   consultationPurpose String?   @db.Text
   notes               String?   @db.Text
+  reportUrl           String?
+  reportFileName      String?
+  reportUploadedAt    DateTime?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report ConsultationReport?
 
   @@index([userId])
   @@index([email])
   @@index([paymentStatus])
+}
+
+model ConsultationReport {
+  id             String   @id @default(uuid())
+  consultationId String   @unique
+  fileName       String
+  mimeType       String
+  data           Bytes
+  createdAt      DateTime @default(now())
+
+  consultation Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+
+  @@index([consultationId])
+}
+
+model KundliCalculation {
+  id         String   @id @default(uuid())
+  userId     String
+  cacheKey   String   @unique
+  input      Json
+  result     Json
+  engine     String
+  ayanamsa   String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 enum UserRole {
@@ -146,4 +180,9 @@ enum UserRole {
 enum OTPPurpose {
   SIGNUP
   RESET_PASSWORD
+}
+
+enum ConsultationStatus {
+  PENDING
+  COMPLETED
 }

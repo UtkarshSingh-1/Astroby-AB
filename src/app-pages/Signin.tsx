@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Star, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const Signin = () => {
   const router = useRouter();
@@ -71,9 +71,11 @@ const Signin = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-2">
-            <div className="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center">
-              <Star className="h-6 w-6 text-red-950" />
-            </div>
+            <img
+              src="/logo.jpeg"
+              alt="AstrobyAB"
+              className="w-14 h-14 rounded-full object-cover"
+            />
           </a>
           <h1 className="mt-4 text-3xl font-bold text-white">Welcome Back</h1>
           <p className="mt-2 text-red-200">Sign in to access your cosmic journey</p>

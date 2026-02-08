@@ -16,7 +16,8 @@ import {
   CheckCircle,
   Clock,
   XCircle,
-  FileText
+  FileText,
+  Download
 } from 'lucide-react';
 
 const Consultations = () => {
@@ -37,13 +38,13 @@ const Consultations = () => {
 
   const filteredConsultations = consultations.filter(c => {
     if (filter === 'all') return true;
-    return c.paymentStatus === filter;
+    return (c.consultationStatus || 'PENDING').toLowerCase() === filter;
   });
 
-  const getStatusBadge = (status: string) => {
+  const getPaymentBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
+        return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Paid</Badge>;
       case 'pending':
         return <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100">Pending</Badge>;
       case 'failed':
@@ -51,6 +52,13 @@ const Consultations = () => {
       default:
         return <Badge variant="secondary">{status}</Badge>;
     }
+  };
+
+  const getConsultationBadge = (status?: Consultation['consultationStatus']) => {
+    if (status === 'COMPLETED') {
+      return <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100">Completed</Badge>;
+    }
+    return <Badge className="bg-sky-100 text-sky-800 hover:bg-sky-100">Pending</Badge>;
   };
 
   const getStatusIcon = (status: string) => {
@@ -98,8 +106,8 @@ const Consultations = () => {
       >
         {[
           { label: 'Total', value: consultations.length, color: 'bg-stone-100' },
-          { label: 'Completed', value: consultations.filter(c => c.paymentStatus === 'completed').length, color: 'bg-green-100' },
-          { label: 'Pending', value: consultations.filter(c => c.paymentStatus === 'pending').length, color: 'bg-amber-100' },
+          { label: 'Completed', value: consultations.filter(c => c.consultationStatus === 'COMPLETED').length, color: 'bg-green-100' },
+          { label: 'Pending', value: consultations.filter(c => c.consultationStatus !== 'COMPLETED').length, color: 'bg-amber-100' },
         ].map((stat, index) => (
           <Card key={index} className={`${stat.color} border-0`}>
             <CardContent className="p-4 text-center">
@@ -148,9 +156,10 @@ const Consultations = () => {
                         {getStatusIcon(consultation.paymentStatus)}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
                           <h3 className="font-semibold text-stone-900">{consultation.serviceName}</h3>
-                          {getStatusBadge(consultation.paymentStatus)}
+                          {getConsultationBadge(consultation.consultationStatus)}
+                          {getPaymentBadge(consultation.paymentStatus)}
                         </div>
                         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-stone-500">
                           <span className="flex items-center gap-1">
@@ -180,10 +189,12 @@ const Consultations = () => {
                           <p className="text-stone-500 text-xs">ID: {consultation.paymentId}</p>
                         )}
                       </div>
-                      <Button variant="ghost" size="sm" className="text-red-900">
-                        View
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
+                      <Link href={`/dashboard/consultations/${consultation.id}`}>
+                        <Button variant="ghost" size="sm" className="text-red-900">
+                          View
+                          <ArrowRight className="h-4 w-4 ml-1" />
+                        </Button>
+                      </Link>
                     </div>
                   </div>
 
@@ -192,6 +203,18 @@ const Consultations = () => {
                       <p className="text-stone-600 text-sm">
                         <span className="font-medium">Astrologer Notes:</span> {consultation.notes}
                       </p>
+                    </div>
+                  )}
+
+                  {consultation.reportUrl && (
+                    <div className="mt-4 pt-4 border-t border-stone-100">
+                      <a
+                        href={consultation.reportUrl}
+                        className="inline-flex items-center text-sm text-red-900 hover:underline"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        {consultation.reportFileName || 'Download resume report'}
+                      </a>
                     </div>
                   )}
                 </CardContent>

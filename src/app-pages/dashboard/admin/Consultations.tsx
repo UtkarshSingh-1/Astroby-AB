@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import type { Consultation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,15 +35,21 @@ import {
   Eye,
   Edit2,
   IndianRupee,
-  User
+  User,
+  FileUp,
+  FileText
 } from 'lucide-react';
 
 const AdminConsultations = () => {
+  const searchParams = useSearchParams();
   const [consultations, setConsultations] = useState<Consultation[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending'>('all');
   const [selectedConsultation, setSelectedConsultation] = useState<Consultation | null>(null);
   const [notes, setNotes] = useState('');
+  const [selectedReportConsultation, setSelectedReportConsultation] = useState<Consultation | null>(null);
+  const [reportFile, setReportFile] = useState<File | null>(null);
+  const [uploadingReport, setUploadingReport] = useState(false);
 
   const loadConsultations = async () => {
     const response = await fetch('/api/admin/consultations');
@@ -57,17 +64,24 @@ const AdminConsultations = () => {
     loadConsultations();
   }, []);
 
-  const handleUpdateStatus = async (id: string, status: 'pending' | 'completed' | 'failed' | 'refunded') => {
+  useEffect(() => {
+    const status = searchParams?.get('status');
+    if (status === 'all' || status === 'completed' || status === 'pending') {
+      setFilter(status);
+    }
+  }, [searchParams]);
+
+  const handleUpdateConsultationStatus = async (id: string, status: 'PENDING' | 'COMPLETED') => {
     const response = await fetch(`/api/admin/consultations/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paymentStatus: status }),
+      body: JSON.stringify({ consultationStatus: status }),
     });
     if (response.ok) {
-      toast.success(`Status updated to ${status}`);
+      toast.success(`Consultation marked ${status === 'COMPLETED' ? 'completed' : 'pending'}`);
       loadConsultations();
     } else {
-      toast.error('Failed to update status');
+      toast.error('Failed to update consultation status');
     }
   };
 
@@ -93,6 +107,38 @@ const AdminConsultations = () => {
     setNotes(consultation.notes || '');
   };
 
+  const openReportDialog = (consultation: Consultation) => {
+    setSelectedReportConsultation(consultation);
+    setReportFile(null);
+  };
+
+  const handleUploadReport = async () => {
+    if (!selectedReportConsultation || !reportFile) {
+      toast.error('Please select a PDF file to upload.');
+      return;
+    }
+
+    setUploadingReport(true);
+    const formData = new FormData();
+    formData.append('file', reportFile);
+
+    const response = await fetch(`/api/admin/consultations/${selectedReportConsultation.id}/report`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    setUploadingReport(false);
+
+    if (response.ok) {
+      toast.success('Consultation report uploaded.');
+      loadConsultations();
+      setSelectedReportConsultation(null);
+    } else {
+      const data = await response.json().catch(() => null);
+      toast.error(data?.message || 'Failed to upload report');
+    }
+  };
+
   const filteredConsultations = consultations.filter(c => {
     const matchesSearch = 
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -100,10 +146,10 @@ const AdminConsultations = () => {
       c.serviceName.toLowerCase().includes(searchQuery.toLowerCase());
     
     if (filter === 'all') return matchesSearch;
-    return matchesSearch && c.paymentStatus === filter;
+    return matchesSearch && (c.consultationStatus || 'PENDING').toLowerCase() === filter;
   });
 
-  const getStatusBadge = (status: string) => {
+  const getPaymentBadge = (status: string) => {
     switch (status) {
       case 'completed':
         return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
@@ -116,10 +162,17 @@ const AdminConsultations = () => {
     }
   };
 
+  const getConsultationBadge = (status?: Consultation['consultationStatus']) => {
+    if (status === 'COMPLETED') {
+      return <Badge className="bg-emerald-100 text-emerald-800">Completed</Badge>;
+    }
+    return <Badge className="bg-sky-100 text-sky-800">Pending</Badge>;
+  };
+
   const stats = {
     total: consultations.length,
-    completed: consultations.filter(c => c.paymentStatus === 'completed').length,
-    pending: consultations.filter(c => c.paymentStatus === 'pending').length,
+    completed: consultations.filter(c => c.consultationStatus === 'COMPLETED').length,
+    pending: consultations.filter(c => c.consultationStatus !== 'COMPLETED').length,
     revenue: consultations
       .filter(c => c.paymentStatus === 'completed')
       .reduce((sum, c) => sum + c.price, 0),
@@ -243,7 +296,16 @@ const AdminConsultations = () => {
                         <span className="font-semibold text-stone-900">₹{consultation.price}</span>
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(consultation.paymentStatus)}
+                        <div className="flex flex-col gap-2">
+                          <div>
+                            <p className="text-xs text-stone-500">Payment</p>
+                            {getPaymentBadge(consultation.paymentStatus)}
+                          </div>
+                          <div>
+                            <p className="text-xs text-stone-500">Consultation</p>
+                            {getConsultationBadge(consultation.consultationStatus)}
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <span className="text-stone-600 text-sm">
@@ -289,6 +351,10 @@ const AdminConsultations = () => {
                                     <p className="text-stone-500 text-sm">Status</p>
                                     <p className="font-medium">{consultation.paymentStatus}</p>
                                   </div>
+                                  <div>
+                                    <p className="text-stone-500 text-sm">Consultation Status</p>
+                                    <p className="font-medium">{consultation.consultationStatus || 'PENDING'}</p>
+                                  </div>
                                 </div>
                                 {consultation.birthPlace && (
                                   <div>
@@ -308,6 +374,18 @@ const AdminConsultations = () => {
                                     <p className="text-amber-700">{consultation.notes}</p>
                                   </div>
                                 )}
+                                {consultation.reportUrl && (
+                                  <div className="bg-stone-50 rounded-lg p-4">
+                                    <p className="text-stone-700 text-sm font-medium mb-2">Resume Report</p>
+                                    <a
+                                      href={consultation.reportUrl}
+                                      className="inline-flex items-center text-sm text-red-900 hover:underline"
+                                    >
+                                      <FileText className="h-4 w-4 mr-2" />
+                                      {consultation.reportFileName || 'Download resume'}
+                                    </a>
+                                  </div>
+                                )}
                               </div>
                             </DialogContent>
                           </Dialog>
@@ -319,12 +397,21 @@ const AdminConsultations = () => {
                           >
                             <Edit2 className="h-4 w-4" />
                           </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openReportDialog(consultation)}
+                            className="text-red-900 hover:text-red-900 hover:bg-red-50"
+                          >
+                            <FileUp className="h-4 w-4" />
+                          </Button>
                           
-                          {consultation.paymentStatus === 'pending' && (
+                          {consultation.consultationStatus !== 'COMPLETED' && (
                             <Button 
                               variant="ghost" 
                               size="icon"
-                              onClick={() => handleUpdateStatus(consultation.id, 'completed')}
+                              onClick={() => handleUpdateConsultationStatus(consultation.id, 'COMPLETED')}
                               className="text-green-600 hover:text-green-700 hover:bg-green-50"
                             >
                               <CheckCircle className="h-4 w-4" />
@@ -370,6 +457,40 @@ const AdminConsultations = () => {
             </DialogClose>
             <Button onClick={handleAddNotes} className="bg-red-900 hover:bg-red-800">
               Save Notes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Upload Dialog */}
+      <Dialog open={!!selectedReportConsultation} onOpenChange={() => setSelectedReportConsultation(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload Consultation Report</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-sm text-stone-600">
+              Upload a PDF report to share with the client.
+            </p>
+            <Input
+              type="file"
+              accept="application/pdf"
+              onChange={(event) => setReportFile(event.target.files?.[0] || null)}
+            />
+            {reportFile && (
+              <p className="text-xs text-stone-500">Selected: {reportFile.name}</p>
+            )}
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button
+              onClick={handleUploadReport}
+              disabled={uploadingReport}
+              className="bg-red-900 hover:bg-red-800"
+            >
+              {uploadingReport ? 'Uploading...' : 'Send Report'}
             </Button>
           </DialogFooter>
         </DialogContent>

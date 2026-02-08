@@ -9,6 +9,7 @@ export async function GET() {
   }
 
   const consultations = await prisma.consultation.findMany({
+    where: { paymentStatus: 'completed' },
     orderBy: { createdAt: 'desc' },
   });
 
