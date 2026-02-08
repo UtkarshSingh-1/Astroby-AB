@@ -22,6 +22,7 @@ model User {
   sessions      Session[]
   profile       UserProfile?
   consultations Consultation[]
+  kundliCalculations KundliCalculation[]
 }
 
 model Account {
