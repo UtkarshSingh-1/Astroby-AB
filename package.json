@@ -7,6 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "postinstall": "prisma generate --schema prisma/schema.prisma",
     "lint": "next lint",
     "prisma:seed": "prisma db seed",
     "prisma:clear-services": "prisma db execute --schema prisma/schema.prisma --file prisma/clear-services.sql",
