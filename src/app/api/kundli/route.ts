@@ -72,8 +72,8 @@ export async function POST(req: Request) {
     data: {
       userId: session.user.id,
       cacheKey,
-      input,
-      result,
+      input: input as unknown as object,
+      result: result as unknown as object,
       engine: result.metadata.engine,
       ayanamsa: resolvedAyanamsa,
     },
