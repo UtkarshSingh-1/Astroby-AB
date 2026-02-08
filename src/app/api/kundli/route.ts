@@ -8,12 +8,13 @@ const DEFAULT_AYANAMSA = 'Lahiri';
 
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session?.user) {
+  if (!session?.user?.id) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
+  const userId = session.user.id;
   const calculation = await prisma.kundliCalculation.findFirst({
-    where: { userId: session.user.id },
+    where: { userId },
     orderBy: { updatedAt: 'desc' },
   });
 
@@ -26,9 +27,10 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session?.user) {
+  if (!session?.user?.id) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
+  const userId = session.user.id;
 
   const body = await req.json();
   const {
@@ -70,7 +72,7 @@ export async function POST(req: Request) {
 
   await prisma.kundliCalculation.create({
     data: {
-      userId: session.user.id || '',
+      userId,
       cacheKey,
       input: input as unknown as object,
       result: result as unknown as object,
@@ -81,7 +83,7 @@ export async function POST(req: Request) {
 
   if (saveToProfile) {
     await prisma.userProfile.upsert({
-      where: { userId: session.user.id },
+      where: { userId },
       update: {
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
         timeOfBirth: timeOfBirth ?? undefined,
@@ -90,7 +92,7 @@ export async function POST(req: Request) {
         longitude: longitude != null ? String(longitude) : undefined,
       },
       create: {
-        userId: session.user.id,
+        userId,
         dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
         timeOfBirth: timeOfBirth ?? undefined,
         birthPlace: placeOfBirth ?? undefined,
