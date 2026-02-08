@@ -118,7 +118,7 @@ export async function GET(req: Request) {
 
   const pdfBytes = await pdf.save();
 
-  return new Response(pdfBytes, {
+  return new Response(Buffer.from(pdfBytes), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': 'attachment; filename="kundli-report.pdf"',
