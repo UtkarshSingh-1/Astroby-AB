@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
   await prisma.kundliCalculation.create({
     data: {
-      userId: session.user.id,
+      userId: session.user.id || '',
       cacheKey,
       input: input as unknown as object,
       result: result as unknown as object,
