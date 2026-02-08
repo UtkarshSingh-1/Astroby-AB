@@ -7,22 +7,30 @@ import { motion } from 'framer-motion';
 import type { Service } from '@/types';
 import { 
   Star, 
+  BookOpen,
   Heart, 
   Briefcase, 
   Activity, 
   Coins, 
   Calendar,
+  Stethoscope,
+  Gem,
+  Sparkles,
   CheckCircle,
   ArrowRight
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
   'Star': Star,
+  'BookOpen': BookOpen,
   'Heart': Heart,
   'Briefcase': Briefcase,
   'Activity': Activity,
   'Coins': Coins,
   'Calendar': Calendar,
+  'Stethoscope': Stethoscope,
+  'Gem': Gem,
+  'Sparkles': Sparkles,
 };
 
 const Services = () => {

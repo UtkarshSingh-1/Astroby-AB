@@ -38,23 +38,42 @@ import {
   Edit2, 
   Trash2, 
   Star,
+  BookOpen,
   Heart,
   Briefcase,
   Activity,
   Coins,
   Calendar,
+  Stethoscope,
+  Gem,
+  Sparkles,
   Search,
   X
 } from 'lucide-react';
 
-const iconOptions = ['Star', 'Heart', 'Briefcase', 'Activity', 'Coins', 'Calendar'];
+const iconOptions = [
+  'Star',
+  'BookOpen',
+  'Heart',
+  'Briefcase',
+  'Activity',
+  'Coins',
+  'Calendar',
+  'Stethoscope',
+  'Gem',
+  'Sparkles',
+];
 const iconMap: Record<string, React.ElementType> = {
   Star,
+  BookOpen,
   Heart,
   Briefcase,
   Activity,
   Coins,
   Calendar,
+  Stethoscope,
+  Gem,
+  Sparkles,
 };
 
 const AdminServices = () => {

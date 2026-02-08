@@ -16,23 +16,29 @@ import {
   Star, 
   Sparkles, 
   Heart, 
+  BookOpen,
   Briefcase, 
   Activity, 
   Coins, 
   Calendar,
+  Stethoscope,
+  Gem,
   CheckCircle,
   User,
-  BookOpen,
   Shield
 } from 'lucide-react';
 
 const iconMap: Record<string, React.ElementType> = {
   Star,
+  BookOpen,
   Heart,
   Briefcase,
   Activity,
   Coins,
   Calendar,
+  Stethoscope,
+  Gem,
+  Sparkles,
 };
 
 // Hero Section

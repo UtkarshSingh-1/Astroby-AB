@@ -8,11 +8,14 @@ import type { Service } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { 
   Star, 
+  BookOpen,
   Heart, 
   Briefcase, 
   Activity, 
   Coins, 
   Calendar,
+  Stethoscope,
+  Gem,
   CheckCircle,
   ArrowLeft,
   Sparkles,
@@ -23,11 +26,15 @@ import {
 
 const iconMap: Record<string, React.ElementType> = {
   'Star': Star,
+  'BookOpen': BookOpen,
   'Heart': Heart,
   'Briefcase': Briefcase,
   'Activity': Activity,
   'Coins': Coins,
   'Calendar': Calendar,
+  'Stethoscope': Stethoscope,
+  'Gem': Gem,
+  'Sparkles': Sparkles,
 };
 
 const ServiceDetail = ({ slug }: { slug: string }) => {
