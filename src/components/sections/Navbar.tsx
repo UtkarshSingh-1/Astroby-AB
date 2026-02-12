@@ -16,6 +16,7 @@ import {
   SheetContent,
   SheetTrigger,
   SheetClose,
+  SheetTitle,
 } from '@/components/ui/sheet';
 import { Menu, User, LogOut } from 'lucide-react';
 
@@ -147,6 +148,7 @@ const Navbar = () => {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-80 bg-red-950 border-red-900">
+              <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-2 mb-8">
                   <img

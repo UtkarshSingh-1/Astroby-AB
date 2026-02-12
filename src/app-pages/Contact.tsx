@@ -10,7 +10,6 @@ import { toast } from 'sonner';
 import { 
   Mail, 
   Phone, 
-  MapPin, 
   Clock, 
   Send,
   Star,
@@ -45,39 +44,47 @@ const Contact = () => {
     }
 
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast.success('Message sent successfully! We will get back to you soon.');
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: '',
-    });
-    setIsSubmitting(false);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = (await response.json()) as { message?: string };
+      if (!response.ok) {
+        toast.error(data.message || 'Failed to send message. Please try again.');
+        return;
+      }
+
+      toast.success('Message sent successfully! We will get back to you soon.');
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: '',
+      });
+    } catch {
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
     {
       icon: Mail,
       title: 'Email',
-      content: 'contact@astrobyab.com',
-      href: 'mailto:contact@astrobyab.com',
+      content: 'singhabhinav748@gmail.com',
+      href: 'mailto:singhabhinav748@gmail.com',
     },
     {
       icon: Phone,
       title: 'Phone',
-      content: '+91 98765 43210',
-      href: 'tel:+919876543210',
-    },
-    {
-      icon: MapPin,
-      title: 'Address',
-      content: '123 Spiritual Lane, Varanasi, UP - 221001',
-      href: '#',
+      content: '+91 89537 22348',
+      href: 'tel:+918953722348',
     },
     {
       icon: Clock,
@@ -187,7 +194,7 @@ const Contact = () => {
                         id="phone"
                         name="phone"
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder="+91 89537 22348"
                         value={formData.phone}
                         onChange={handleChange}
                       />
@@ -300,7 +307,7 @@ const Contact = () => {
                   Need urgent astrological guidance? We offer priority consultations for time-sensitive matters.
                 </p>
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+918953722348"
                   className="inline-flex items-center gap-2 text-red-900 font-semibold hover:text-red-700"
                 >
                   <Phone className="h-4 w-4" />
@@ -312,30 +319,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-stone-900 mb-2">Visit Our Center</h2>
-            <p className="text-stone-600">
-              Experience the serene atmosphere of our astrology center in Varanasi
-            </p>
-          </div>
-          
-          <div className="aspect-video bg-stone-100 rounded-2xl overflow-hidden">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3607.0!2d83.0103!3d25.3176!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDE5JzAzLjQiTiA4M8KwMDAnMzcuMSJF!5e0!3m2!1sen!2sin!4v1600000000000!5m2!1sen!2sin"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="AstrobyAB Location"
-            />
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

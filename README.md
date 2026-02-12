@@ -27,12 +27,13 @@ DATABASE_URL=postgresql://...
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
 
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=...
-SMTP_PASS=...
-EMAIL_FROM=AstrobyAB <you@example.com>
+SMTP_HOST=smtp-relay.brevo.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_brevo_login
+SMTP_PASS=your_brevo_smtp_key
+EMAIL_FROM=AstrobyAB <singhabhinav748@gmail.com>
+CONTACT_RECEIVER_EMAIL=singhabhinav748@gmail.com
 
 RAZORPAY_KEY_ID=...
 RAZORPAY_KEY_SECRET=...
@@ -41,6 +42,10 @@ RAZORPAY_WEBHOOK_SECRET=...
 NEXT_PUBLIC_APP_NAME=AstrobyAB
 NEXT_PUBLIC_RAZORPAY_KEY_ID=... 
 ```
+
+Brevo note:
+- Create an SMTP key in Brevo and use it as `SMTP_PASS`.
+- Keep `SMTP_SECURE=false` for port `587`.
 
 ## Prisma
 ```bash

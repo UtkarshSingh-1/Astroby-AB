@@ -107,9 +107,9 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           {[
-            { value: '10K+', label: 'Happy Clients' },
-            { value: '25+', label: 'Years Experience' },
-            { value: '50K+', label: 'Kundlis Generated' },
+            { value: '500+', label: 'Happy Clients' },
+            { value: '5+', label: 'Years Experience' },
+            { value: '600+', label: 'Kundlis Generated' },
             { value: '4.9', label: 'Rating' },
           ].map((stat, index) => (
             <div key={index} className="text-center">
@@ -190,7 +190,9 @@ const ServicesSection = () => {
                 <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
                   <Icon className="h-6 w-6 text-red-900" />
                 </div>
-                <h3 className="text-xl font-semibold text-stone-900 mb-2">{service.name}</h3>
+                <h3 className="text-xl font-semibold text-stone-900 mb-2">
+                  {index === 1 ? 'Health and disease astrology' : service.name}
+                </h3>
                 <p className="text-stone-600 text-sm mb-4">{service.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-red-900">₹{service.price}</span>

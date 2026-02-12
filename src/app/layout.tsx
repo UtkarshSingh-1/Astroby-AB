@@ -1,9 +1,15 @@
 import '../index.css';
 import Providers from './providers';
+import type { Metadata } from 'next';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'AstrobyAB',
   description: 'Vedic astrology services and consultations',
+  icons: {
+    icon: '/logo.jpeg',
+    shortcut: '/logo.jpeg',
+    apple: '/logo.jpeg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

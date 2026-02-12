@@ -90,7 +90,9 @@ const Services = () => {
                         <Icon className="h-7 w-7 text-red-900" />
                       </div>
                       <div className="flex-1">
-                        <h2 className="text-2xl font-bold text-stone-900 mb-2">{service.name}</h2>
+                        <h2 className="text-2xl font-bold text-stone-900 mb-2">
+                          {index === 1 ? 'Health and disease astrology' : service.name}
+                        </h2>
                         <p className="text-stone-600">{service.description}</p>
                       </div>
                     </div>

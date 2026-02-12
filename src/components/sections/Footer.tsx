@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Mail, Phone, Facebook, Instagram, Youtube } from 'lucide-react';
 import type { Service } from '@/types';
 
 const Footer = () => {
@@ -120,23 +120,16 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4 text-amber-400">Contact Us</h3>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                <span className="text-red-200 text-sm">
-                  123 Spiritual Lane, Varanasi,<br />
-                  Uttar Pradesh, India - 221001
-                </span>
-              </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-amber-400 flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-red-200 hover:text-amber-400 transition-colors text-sm">
-                  +91 98765 43210
+                <a href="tel:+918953722348" className="text-red-200 hover:text-amber-400 transition-colors text-sm">
+                  +91 89537 22348
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-amber-400 flex-shrink-0" />
-                <a href="mailto:contact@astrobyab.com" className="text-red-200 hover:text-amber-400 transition-colors text-sm">
-                  contact@astrobyab.com
+                <a href="mailto:singhabhinav748@gmail.com" className="text-red-200 hover:text-amber-400 transition-colors text-sm">
+                  singhabhinav748@gmail.com
                 </a>
               </li>
             </ul>
