@@ -14,6 +14,7 @@ export const authOptions: NextAuthOptions = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
       name: 'Credentials',
@@ -69,14 +70,17 @@ export const authOptions: NextAuthOptions = {
         return true;
       }
 
-      const alreadyLinked = existingUser.accounts.some(
-        (acc) =>
-          acc.provider === 'google' &&
-          acc.providerAccountId === account.providerAccountId
+      const linkedGoogleAccount = existingUser.accounts.find(
+        (acc) => acc.provider === 'google'
       );
 
-      // Enforce one account per email: block linking a different Google account.
-      return alreadyLinked;
+      // Allow first-time Google linking for an existing same-email user.
+      if (!linkedGoogleAccount) {
+        return true;
+      }
+
+      // If already linked, only allow the same Google account id.
+      return linkedGoogleAccount.providerAccountId === account.providerAccountId;
     },
     async jwt({ token, user }) {
       if (user) {
