@@ -12,14 +12,14 @@ import {
 } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import type { Service } from '@/types';
-import { 
-  Star, 
-  Sparkles, 
-  Heart, 
+import {
+  Star,
+  Sparkles,
+  Heart,
   BookOpen,
-  Briefcase, 
-  Activity, 
-  Coins, 
+  Briefcase,
+  Activity,
+  Coins,
   Calendar,
   Stethoscope,
   Gem,
@@ -77,7 +77,7 @@ const Hero = () => {
             <span className="block text-amber-400">Destiny</span>
           </h1>
           <p className="text-red-100 text-lg md:text-xl max-w-2xl mx-auto mb-8">
-            Authentic Vedic astrology guidance for life's journey. Unlock the secrets 
+            Authentic Vedic astrology guidance for life's journey. Unlock the secrets
             of your birth chart with Acharya AB's expert insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -191,13 +191,13 @@ const ServicesSection = () => {
                   <Icon className="h-6 w-6 text-red-900" />
                 </div>
                 <h3 className="text-xl font-semibold text-stone-900 mb-2">
-                  {index === 1 ? 'Health and disease astrology' : service.name}
+                  {service.name}
                 </h3>
                 <p className="text-stone-600 text-sm mb-4">{service.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold text-red-900">₹{service.price}</span>
                   {service.slug ? (
-                    <Link 
+                    <Link
                       href={`/services/${service.slug}`}
                       className="text-red-900 hover:text-red-700 font-medium text-sm flex items-center gap-1"
                     >
@@ -258,7 +258,7 @@ const WhyChooseUs = () => {
               Why AstrobyAB Stands Apart
             </h2>
             <p className="text-stone-600 mb-8">
-              We combine ancient Vedic wisdom with modern accessibility to provide 
+              We combine ancient Vedic wisdom with modern accessibility to provide
               you with authentic astrological guidance that transforms lives.
             </p>
 
@@ -332,7 +332,7 @@ const CTASection = () => {
             Get Your First Consultation FREE
           </h2>
           <p className="text-red-200 text-lg mb-8">
-            New users get a complimentary 15-minute consultation. 
+            New users get a complimentary 15-minute consultation.
             Discover what Vedic astrology can reveal about your life path.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -342,9 +342,9 @@ const CTASection = () => {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="border-white text-white bg-transparent hover:bg-white/10 px-8"
               >
                 Contact Us

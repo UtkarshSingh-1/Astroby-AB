@@ -5,13 +5,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import type { Service } from '@/types';
-import { 
-  Star, 
+import {
+  Star,
   BookOpen,
-  Heart, 
-  Briefcase, 
-  Activity, 
-  Coins, 
+  Heart,
+  Briefcase,
+  Activity,
+  Coins,
   Calendar,
   Stethoscope,
   Gem,
@@ -60,7 +60,7 @@ const Services = () => {
               Vedic Astrology Services
             </h1>
             <p className="text-red-100 text-lg max-w-2xl mx-auto">
-              Discover the ancient wisdom of Vedic astrology through our comprehensive 
+              Discover the ancient wisdom of Vedic astrology through our comprehensive
               range of personalized services tailored to your unique cosmic blueprint.
             </p>
           </motion.div>
@@ -74,7 +74,7 @@ const Services = () => {
             {services.map((service, index) => {
               const Icon = iconMap[service.icon || 'Star'] || Star;
               const features = service.features || [];
-              
+
               return (
                 <motion.div
                   key={service.id}
@@ -91,7 +91,7 @@ const Services = () => {
                       </div>
                       <div className="flex-1">
                         <h2 className="text-2xl font-bold text-stone-900 mb-2">
-                          {index === 1 ? 'Health and disease astrology' : service.name}
+                          {service.name}
                         </h2>
                         <p className="text-stone-600">{service.description}</p>
                       </div>
@@ -207,9 +207,9 @@ const Services = () => {
               </Button>
             </Link>
             <Link href="/contact">
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="border-white text-white hover:bg-white/10"
               >
                 Contact Us
