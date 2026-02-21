@@ -124,9 +124,9 @@ const Profile = () => {
       }
 
       toast.success('Profile updated successfully!');
-    } catch (error: any) {
+    } catch (error) {
       console.error("Profile save error:", error);
-      toast.error(error.message || 'Failed to update profile');
+      toast.error(error instanceof Error ? error.message : 'Failed to update profile');
     }
 
     setIsSaving(false);
