@@ -1,28 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
-  emailVerified DateTime?
-  passwordHash  String?
-  name          String?
-  image         String?
-  role          UserRole @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @default(now()) @updatedAt
-
-  accounts      Account[]
-  sessions      Session[]
-  profile       UserProfile?
-  consultations Consultation[]
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  emailVerified      DateTime?
+  passwordHash       String?
+  name               String?
+  image              String?
+  role               UserRole            @default(USER)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
+  accounts           Account[]
+  consultations      Consultation[]
   kundliCalculations KundliCalculation[]
+  sessions           Session[]
+  profile            UserProfile?
 }
 
 model Account {
@@ -34,24 +33,21 @@ model Account {
   access_token      String?
   refresh_token     String?
   expires_at        Int?
-  token_type        String?
-  scope             String?
   id_token          String?
+  scope             String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token_type        String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
-
 
 model Session {
   id           String   @id @default(uuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -78,21 +74,21 @@ model Otp {
 model Service {
   id          String   @id @default(uuid())
   name        String   @unique
-  slug        String?  @unique
   price       Float
-  description String?  @db.Text
+  description String?
   icon        String?
-  features    String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  slug        String?  @unique
+  features    String[]
 
   @@index([name])
   @@index([slug])
 }
 
 model UserProfile {
-  id            String   @id @default(uuid())
-  userId        String   @unique
+  id            String    @id @default(uuid())
+  userId        String    @unique
   dateOfBirth   DateTime?
   timeOfBirth   String?
   birthPlace    String?
@@ -104,44 +100,42 @@ model UserProfile {
   maritalStatus String?
   education     String?
   profession    String?
-  bio           String?  @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model Consultation {
-  id                  String    @id @default(uuid())
+  id                  String              @id @default(uuid())
   userId              String
   email               String
   name                String
   serviceName         String
   price               Float
-  paymentId           String?   @unique
-  razorpayOrderId     String?   @unique
-  paymentStatus       String    @default("pending")
-  consultationStatus  ConsultationStatus @default(PENDING)
-  gender              String?
-  maritalStatus       String?
-  education           String?
-  profession          String?
+  paymentId           String?             @unique
+  paymentStatus       String              @default("pending")
   consultationDate    DateTime?
-  birthPlace          String?
+  notes               String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
   birthDate           DateTime?
+  birthPlace          String?
   birthTime           String?
-  consultationPurpose String?   @db.Text
-  notes               String?   @db.Text
-  reportUrl           String?
+  consultationPurpose String?
+  razorpayOrderId     String?             @unique
   reportFileName      String?
   reportUploadedAt    DateTime?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  report ConsultationReport?
+  reportUrl           String?
+  consultationStatus  ConsultationStatus  @default(PENDING)
+  education           String?
+  gender              String?
+  maritalStatus       String?
+  profession          String?
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  report              ConsultationReport?
 
   @@index([userId])
   @@index([email])
@@ -149,30 +143,28 @@ model Consultation {
 }
 
 model ConsultationReport {
-  id             String   @id @default(uuid())
-  consultationId String   @unique
+  id             String       @id @default(uuid())
+  consultationId String       @unique
   fileName       String
   mimeType       String
   data           Bytes
-  createdAt      DateTime @default(now())
-
-  consultation Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  consultation   Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
 
   @@index([consultationId])
 }
 
 model KundliCalculation {
-  id         String   @id @default(uuid())
-  userId     String
-  cacheKey   String   @unique
-  input      Json
-  result     Json
-  engine     String
-  ayanamsa   String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  userId    String
+  cacheKey  String   @unique
+  input     Json
+  result    Json
+  engine    String
+  ayanamsa  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
