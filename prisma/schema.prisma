@@ -124,6 +124,10 @@ model Consultation {
   razorpayOrderId     String?   @unique
   paymentStatus       String    @default("pending")
   consultationStatus  ConsultationStatus @default(PENDING)
+  gender              String?
+  maritalStatus       String?
+  education           String?
+  profession          String?
   consultationDate    DateTime?
   birthPlace          String?
   birthDate           DateTime?

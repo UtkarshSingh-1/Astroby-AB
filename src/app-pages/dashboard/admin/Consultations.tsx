@@ -27,9 +27,9 @@ import {
 } from '@/components/ui/dialog';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { 
-  Calendar, 
-  Search, 
+import {
+  Calendar,
+  Search,
   CheckCircle,
   Clock,
   Eye,
@@ -87,7 +87,7 @@ const AdminConsultations = () => {
 
   const handleAddNotes = async () => {
     if (!selectedConsultation) return;
-    
+
     const response = await fetch(`/api/admin/consultations/${selectedConsultation.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -140,11 +140,11 @@ const AdminConsultations = () => {
   };
 
   const filteredConsultations = consultations.filter(c => {
-    const matchesSearch = 
+    const matchesSearch =
       c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.serviceName.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     if (filter === 'all') return matchesSearch;
     return matchesSearch && (c.consultationStatus || 'PENDING').toLowerCase() === filter;
   });
@@ -356,6 +356,48 @@ const AdminConsultations = () => {
                                     <p className="font-medium">{consultation.consultationStatus || 'PENDING'}</p>
                                   </div>
                                 </div>
+                                {consultation.birthDate && (
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Birth Date</p>
+                                      <p className="font-medium">
+                                        {new Date(consultation.birthDate).toLocaleDateString('en-IN')}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Birth Time</p>
+                                      <p className="font-medium">{consultation.birthTime}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                <div className="grid grid-cols-2 gap-4">
+                                  {consultation.gender && (
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Gender</p>
+                                      <p className="font-medium">{consultation.gender}</p>
+                                    </div>
+                                  )}
+                                  {consultation.maritalStatus && (
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Marital Status</p>
+                                      <p className="font-medium">{consultation.maritalStatus}</p>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  {consultation.education && (
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Education</p>
+                                      <p className="font-medium">{consultation.education}</p>
+                                    </div>
+                                  )}
+                                  {consultation.profession && (
+                                    <div>
+                                      <p className="text-stone-500 text-sm">Profession</p>
+                                      <p className="font-medium">{consultation.profession}</p>
+                                    </div>
+                                  )}
+                                </div>
                                 {consultation.birthPlace && (
                                   <div>
                                     <p className="text-stone-500 text-sm">Birth Place</p>
@@ -389,9 +431,9 @@ const AdminConsultations = () => {
                               </div>
                             </DialogContent>
                           </Dialog>
-                          
-                          <Button 
-                            variant="ghost" 
+
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => openNotesDialog(consultation)}
                           >
@@ -406,10 +448,10 @@ const AdminConsultations = () => {
                           >
                             <FileUp className="h-4 w-4" />
                           </Button>
-                          
+
                           {consultation.consultationStatus !== 'COMPLETED' && (
-                            <Button 
-                              variant="ghost" 
+                            <Button
+                              variant="ghost"
                               size="icon"
                               onClick={() => handleUpdateConsultationStatus(consultation.id, 'COMPLETED')}
                               className="text-green-600 hover:text-green-700 hover:bg-green-50"

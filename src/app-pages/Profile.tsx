@@ -11,12 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { 
-  User, 
-  Mail, 
-  Calendar, 
-  Clock, 
-  MapPin, 
+import {
+  User,
+  Mail,
+  Calendar,
+  Clock,
+  MapPin,
   Save,
   CheckCircle
 } from 'lucide-react';
@@ -41,7 +41,7 @@ const Profile = () => {
 
   useEffect(() => {
     const loadProfile = async () => {
-      if (!user) return;
+      if (!user || !user.id) return;
 
       const response = await fetch('/api/profile');
       if (!response.ok) {
@@ -72,7 +72,7 @@ const Profile = () => {
         }));
       }
     };
-    
+
     loadProfile();
   }, [user]);
 
@@ -92,11 +92,14 @@ const Profile = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) return;
-    
+
+    if (!user || !user.id) {
+      toast.error('You must be signed in to save changes');
+      return;
+    }
+
     setIsSaving(true);
-    
+
     try {
       const response = await fetch('/api/profile', {
         method: 'PUT',
@@ -119,12 +122,13 @@ const Profile = () => {
       if (!response.ok) {
         throw new Error('Failed to update profile');
       }
-      
+
       toast.success('Profile updated successfully!');
-    } catch {
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      console.error("Profile save error:", error);
+      toast.error(error.message || 'Failed to update profile');
     }
-    
+
     setIsSaving(false);
   };
 
@@ -194,8 +198,8 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="gender">Gender</Label>
-                    <Select 
-                      value={formData.gender} 
+                    <Select
+                      value={formData.gender}
                       onValueChange={(value) => handleSelectChange('gender', value)}
                     >
                       <SelectTrigger>
@@ -210,8 +214,8 @@ const Profile = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="maritalStatus">Marital Status</Label>
-                    <Select 
-                      value={formData.maritalStatus} 
+                    <Select
+                      value={formData.maritalStatus}
                       onValueChange={(value) => handleSelectChange('maritalStatus', value)}
                     >
                       <SelectTrigger>
@@ -348,8 +352,8 @@ const Profile = () => {
                     <div>
                       <p className="text-amber-800 text-sm font-medium">Why we need this?</p>
                       <p className="text-amber-700 text-sm">
-                        Your birth details are essential for generating an accurate Kundli (birth chart) 
-                        and providing precise astrological predictions. This information is kept strictly 
+                        Your birth details are essential for generating an accurate Kundli (birth chart)
+                        and providing precise astrological predictions. This information is kept strictly
                         confidential.
                       </p>
                     </div>

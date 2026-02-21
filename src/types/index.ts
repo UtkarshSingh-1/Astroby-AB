@@ -90,6 +90,10 @@ export interface Consultation {
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
   consultationStatus: 'PENDING' | 'COMPLETED';
   consultationDate?: Date;
+  gender?: string;
+  maritalStatus?: string;
+  education?: string;
+  profession?: string;
   birthPlace?: string;
   birthDate?: Date;
   birthTime?: string;
@@ -221,6 +225,10 @@ export interface ConsultationFormData {
   serviceId: string;
   name: string;
   email: string;
+  gender: string;
+  maritalStatus: string;
+  education: string;
+  profession: string;
   birthDate: string;
   birthTime: string;
   birthPlace: string;

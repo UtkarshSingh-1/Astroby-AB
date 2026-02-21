@@ -36,6 +36,10 @@ class PaymentService {
       birthDate: string;
       birthTime: string;
       birthPlace: string;
+      gender: string;
+      maritalStatus: string;
+      education: string;
+      profession: string;
       consultationPurpose: string;
     }
   ): Promise<{ consultationId: string; order: RazorpayOrder; keyId?: string }> {
@@ -50,6 +54,10 @@ class PaymentService {
         birthDate: formData.birthDate,
         birthTime: formData.birthTime,
         birthPlace: formData.birthPlace,
+        gender: formData.gender,
+        maritalStatus: formData.maritalStatus,
+        education: formData.education,
+        profession: formData.profession,
         consultationPurpose: formData.consultationPurpose,
       }),
     });

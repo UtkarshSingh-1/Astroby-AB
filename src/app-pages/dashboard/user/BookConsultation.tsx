@@ -13,12 +13,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import { 
-  Star, 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  User, 
+import {
+  Star,
+  Calendar,
+  Clock,
+  MapPin,
+  User,
   Mail,
   CheckCircle,
   ArrowLeft,
@@ -29,17 +29,21 @@ const BookConsultation = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user } = useAuth();
-  
+
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     birthDate: '',
     birthTime: '',
     birthPlace: '',
+    gender: '',
+    maritalStatus: '',
+    education: '',
+    profession: '',
     consultationPurpose: '',
   });
 
@@ -48,7 +52,7 @@ const BookConsultation = () => {
       const response = await fetch('/api/services');
       const data = await response.json();
       setServices(data);
-      
+
       // Pre-select service if passed from service detail page
       const preSelectedService = searchParams?.get('serviceId');
       if (preSelectedService) {
@@ -79,6 +83,10 @@ const BookConsultation = () => {
         birthDate: prev.birthDate || birthDate,
         birthTime: prev.birthTime || profile?.timeOfBirth || '',
         birthPlace: prev.birthPlace || birthPlace || '',
+        gender: prev.gender || profile?.gender || '',
+        maritalStatus: prev.maritalStatus || profile?.maritalStatus || '',
+        education: prev.education || profile?.education || '',
+        profession: prev.profession || profile?.profession || '',
       }));
     };
 
@@ -92,6 +100,13 @@ const BookConsultation = () => {
     }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleServiceChange = (value: string) => {
     setSelectedService(value);
   };
@@ -100,13 +115,13 @@ const BookConsultation = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedService) {
       toast.error('Please select a service');
       return;
     }
-    
-    if (!formData.name || !formData.email || !formData.birthDate || !formData.birthTime || !formData.birthPlace) {
+
+    if (!formData.name || !formData.email || !formData.birthDate || !formData.birthTime || !formData.birthPlace || !formData.gender || !formData.maritalStatus || !formData.education || !formData.profession) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -146,7 +161,7 @@ const BookConsultation = () => {
             response.razorpay_order_id,
             response.razorpay_signature
           );
-          
+
           if (confirmed) {
             toast.success('Payment successful! Your consultation has been booked.');
             router.push('/dashboard/consultations');
@@ -164,7 +179,7 @@ const BookConsultation = () => {
       toast.error('An error occurred. Please try again.');
       console.error('Booking error:', error);
     }
-    
+
     setIsProcessing(false);
   };
 
@@ -252,6 +267,69 @@ const BookConsultation = () => {
                         required
                       />
                     </div>
+                  </div>
+                </div>
+
+                {/* Gender and Marital Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="gender">Gender *</Label>
+                    <Select
+                      value={formData.gender}
+                      onValueChange={(value) => handleSelectChange('gender', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="maritalStatus">Marital Status *</Label>
+                    <Select
+                      value={formData.maritalStatus}
+                      onValueChange={(value) => handleSelectChange('maritalStatus', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Single">Single</SelectItem>
+                        <SelectItem value="Married">Married</SelectItem>
+                        <SelectItem value="Divorced">Divorced</SelectItem>
+                        <SelectItem value="Widowed">Widowed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Education and Profession */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="education">Education *</Label>
+                    <Input
+                      id="education"
+                      name="education"
+                      value={formData.education}
+                      onChange={handleChange}
+                      placeholder="Your highest education"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="profession">Profession *</Label>
+                    <Input
+                      id="profession"
+                      name="profession"
+                      value={formData.profession}
+                      onChange={handleChange}
+                      placeholder="Your profession"
+                      required
+                    />
                   </div>
                 </div>
 
@@ -417,4 +495,3 @@ const BookConsultation = () => {
 };
 
 export default BookConsultation;
-

@@ -16,6 +16,10 @@ export async function POST(request: Request) {
       birthDate,
       birthTime,
       birthPlace,
+      gender,
+      maritalStatus,
+      education,
+      profession,
       consultationPurpose,
     } = body || {};
 
@@ -66,6 +70,10 @@ export async function POST(request: Request) {
         birthPlace,
         birthDate: birthDate ? new Date(birthDate) : undefined,
         birthTime,
+        gender,
+        maritalStatus,
+        education,
+        profession,
         consultationPurpose,
       },
     });

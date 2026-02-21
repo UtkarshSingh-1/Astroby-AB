@@ -1,0 +1,25 @@
+
+> my-app@0.0.0 build
+> next build
+
+   ▲ Next.js 15.5.12
+   - Environments: .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.0s
+   Linting and checking validity of types ...
+
+ ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+Failed to compile.
+
+./src/app/api/kundli/pdf/route.ts:16:36
+Type error: Property 'kundliCalculation' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+
+[0m [90m 14 |[39m   [36mconst[39m cacheKey [33m=[39m searchParams[33m.[39m[36mget[39m([32m'cacheKey'[39m)[33m;[39m
+ [90m 15 |[39m
+[31m[1m>[22m[39m[90m 16 |[39m   [36mconst[39m calculation [33m=[39m [36mawait[39m prisma[33m.[39mkundliCalculation[33m.[39mfindFirst({
+ [90m    |[39m                                    [31m[1m^[22m[39m
+ [90m 17 |[39m     where[33m:[39m {
+ [90m 18 |[39m       userId[33m:[39m session[33m.[39muser[33m.[39mid[33m,[39m
+ [90m 19 |[39m       [33m...[39m(cacheKey [33m?[39m { cacheKey } [33m:[39m {})[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null
