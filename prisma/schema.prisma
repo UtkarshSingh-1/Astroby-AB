@@ -116,6 +116,7 @@ model Consultation {
   serviceName         String
   price               Float
   paymentId           String?             @unique
+  paymentOrderId      String?             @unique
   paymentStatus       String              @default("pending")
   consultationDate    DateTime?
   notes               String?
@@ -125,7 +126,6 @@ model Consultation {
   birthPlace          String?
   birthTime           String?
   consultationPurpose String?
-  razorpayOrderId     String?             @unique
   reportFileName      String?
   reportUploadedAt    DateTime?
   reportUrl           String?

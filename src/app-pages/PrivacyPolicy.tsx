@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
         • Personal Information: Name, email address, phone number, date of birth, time of birth, 
           and place of birth required for astrological calculations.
         • Account Information: Login credentials and profile information.
-        • Payment Information: Transaction details processed through Razorpay (we do not store 
+        • Payment Information: Transaction details processed through Cashfree (we do not store 
           complete card details).
         • Communication Data: Messages, queries, and feedback you send us.
         • Usage Data: Information about how you use our website and services.
@@ -186,7 +186,7 @@ const PrivacyPolicy = () => {
               <div>
                 <h3 className="text-lg font-semibold text-stone-900 mb-2">Third-Party Services</h3>
                 <p className="text-stone-600">
-                  We use trusted third-party services for payment processing (Razorpay) and analytics. 
+                  We use trusted third-party services for payment processing (Cashfree) and analytics. 
                   These services have their own privacy policies, and we encourage you to review them.
                 </p>
               </div>

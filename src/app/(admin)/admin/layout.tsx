@@ -3,6 +3,7 @@ import AdminGuard from './guard';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
+import Providers from '../../providers';
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
@@ -15,8 +16,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <AdminGuard>
-      <AdminLayout>{children}</AdminLayout>
-    </AdminGuard>
+    <Providers>
+      <AdminGuard>
+        <AdminLayout>{children}</AdminLayout>
+      </AdminGuard>
+    </Providers>
   );
 }

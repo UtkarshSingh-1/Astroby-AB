@@ -270,6 +270,7 @@ const AdminConsultations = () => {
                   <TableHead>Service</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Payment IDs</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -308,6 +309,18 @@ const AdminConsultations = () => {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <div className="space-y-1 text-xs text-stone-600">
+                          <p>
+                            <span className="text-stone-500">Order:</span>{' '}
+                            <span className="font-mono">{consultation.paymentOrderId || '-'}</span>
+                          </p>
+                          <p>
+                            <span className="text-stone-500">Txn:</span>{' '}
+                            <span className="font-mono">{consultation.paymentId || '-'}</span>
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <span className="text-stone-600 text-sm">
                           {new Date(consultation.createdAt).toLocaleDateString('en-IN', {
                             day: 'numeric',
@@ -336,6 +349,16 @@ const AdminConsultations = () => {
                                   <div>
                                     <p className="text-stone-500 text-sm">Email</p>
                                     <p className="font-medium">{consultation.email}</p>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <p className="text-stone-500 text-sm">Payment Order ID</p>
+                                    <p className="font-mono text-sm">{consultation.paymentOrderId || "-"}</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-stone-500 text-sm">Transaction ID</p>
+                                    <p className="font-mono text-sm">{consultation.paymentId || "-"}</p>
                                   </div>
                                 </div>
                                 <div>

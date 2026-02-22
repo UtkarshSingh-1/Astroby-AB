@@ -164,7 +164,7 @@ const Services = () => {
               {
                 step: '03',
                 title: 'Make Payment',
-                description: 'Secure payment through Razorpay for your consultation.',
+                description: 'Secure payment through Cashfree for your consultation.',
               },
               {
                 step: '04',

@@ -86,7 +86,7 @@ export interface Consultation {
   serviceName: string;
   price: number;
   paymentId?: string;
-  razorpayOrderId?: string;
+  paymentOrderId?: string;
   paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
   consultationStatus: 'PENDING' | 'COMPLETED';
   consultationDate?: Date;
@@ -192,18 +192,9 @@ export interface OTPData {
 }
 
 // Payment Types
-export interface RazorpayOrder {
-  id: string;
-  amount: number;
-  currency: string;
-  receipt: string;
-  status: string;
-}
-
-export interface PaymentVerification {
-  razorpayOrderId: string;
-  razorpayPaymentId: string;
-  razorpaySignature: string;
+export interface CashfreeOrder {
+  orderId: string;
+  paymentSessionId: string;
 }
 
 // Form Types
@@ -225,6 +216,7 @@ export interface ConsultationFormData {
   serviceId: string;
   name: string;
   email: string;
+  phone: string;
   gender: string;
   maritalStatus: string;
   education: string;

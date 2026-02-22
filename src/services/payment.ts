@@ -1,27 +1,21 @@
-import type { RazorpayOrder, PaymentVerification } from '@/types';
+import type { CashfreeOrder } from '@/types';
 
-type RazorpayHandlerResponse = {
-  razorpay_payment_id: string;
-  razorpay_order_id: string;
-  razorpay_signature: string;
+type CashfreeCheckoutOptions = {
+  paymentSessionId: string;
+  redirectTarget?: '_self' | '_blank' | '_top' | '_modal';
 };
 
-type RazorpayOptions = {
-  key?: string;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill: { name: string; email: string; contact?: string };
-  handler: (response: RazorpayHandlerResponse) => void;
-  modal: { ondismiss: () => void };
-  theme: { color: string };
+type CashfreeCheckoutResult = {
+  error?: { message?: string };
+};
+
+type CashfreeInstance = {
+  checkout: (options: CashfreeCheckoutOptions) => Promise<CashfreeCheckoutResult | undefined>;
 };
 
 declare global {
   interface Window {
-    Razorpay?: new (options: RazorpayOptions) => { open: () => void };
+    Cashfree?: (options: { mode: 'sandbox' | 'production' }) => CashfreeInstance;
   }
 }
 
@@ -33,6 +27,7 @@ class PaymentService {
     formData: {
       name: string;
       email: string;
+      phone: string;
       birthDate: string;
       birthTime: string;
       birthPlace: string;
@@ -42,8 +37,8 @@ class PaymentService {
       profession: string;
       consultationPurpose: string;
     }
-  ): Promise<{ consultationId: string; order: RazorpayOrder; keyId?: string }> {
-    const response = await fetch('/api/razorpay/order', {
+  ): Promise<{ consultationId: string; order: CashfreeOrder }> {
+    const response = await fetch('/api/cashfree/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -51,6 +46,7 @@ class PaymentService {
         serviceId,
         name: formData.name,
         email: formData.email,
+        phone: formData.phone,
         birthDate: formData.birthDate,
         birthTime: formData.birthTime,
         birthPlace: formData.birthPlace,
@@ -73,18 +69,14 @@ class PaymentService {
   // Confirm payment success
   async confirmPayment(
     consultationId: string,
-    razorpayPaymentId: string,
-    razorpayOrderId: string,
-    razorpaySignature: string
+    orderId: string
   ): Promise<boolean> {
-    const response = await fetch('/api/razorpay/verify', {
+    const response = await fetch('/api/cashfree/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         consultationId,
-        razorpay_payment_id: razorpayPaymentId,
-        razorpay_order_id: razorpayOrderId,
-        razorpay_signature: razorpaySignature,
+        orderId,
       }),
     });
 
@@ -97,73 +89,62 @@ class PaymentService {
       return false;
     }
 
-    const isValid = true;
-
-    if (!isValid) {
-      return false;
-    }
-
-    const verification: PaymentVerification = {
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
-    };
-
-    return !!verification;
+    return true;
   }
 
-  // Load Razorpay script
-  loadRazorpayScript(): Promise<boolean> {
+  // Load Cashfree script
+  loadCashfreeScript(): Promise<CashfreeInstance | null> {
     return new Promise((resolve) => {
-      if (document.getElementById('razorpay-script')) {
-        resolve(true);
+      if (window.Cashfree) {
+        resolve(window.Cashfree({ mode: this.getCashfreeMode() }));
         return;
       }
 
       const script = document.createElement('script');
-      script.id = 'razorpay-script';
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
+      script.id = 'cashfree-script';
+      script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      script.onload = () => {
+        if (!window.Cashfree) {
+          resolve(null);
+          return;
+        }
+        resolve(window.Cashfree({ mode: this.getCashfreeMode() }));
+      };
+      script.onerror = () => resolve(null);
       document.body.appendChild(script);
     });
   }
 
-  // Open Razorpay checkout (mock)
+  private getCashfreeMode(): 'sandbox' | 'production' {
+    const env = (process.env.NEXT_PUBLIC_CASHFREE_ENV || 'production').toLowerCase();
+    return env === 'sandbox' ? 'sandbox' : 'production';
+  }
+
+  // Open Cashfree checkout
   async openCheckout(
-    order: RazorpayOrder,
-    userDetails: { name: string; email: string; contact?: string },
-    keyId: string | undefined,
-    onSuccess: (response: RazorpayHandlerResponse) => void,
+    order: CashfreeOrder,
+    onSuccess: () => void,
     onFailure: (error: Error) => void
   ): Promise<void> {
-    const loaded = await this.loadRazorpayScript();
-    if (!loaded || !window.Razorpay) {
-      onFailure(new Error('Razorpay SDK failed to load'));
+    const cashfree = await this.loadCashfreeScript();
+    if (!cashfree) {
+      onFailure(new Error('Cashfree SDK failed to load'));
       return;
     }
 
-    const options: RazorpayOptions = {
-      key: keyId || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      name: 'AstrobyAB',
-      description: 'Consultation Payment',
-      order_id: order.id,
-      prefill: {
-        name: userDetails.name,
-        email: userDetails.email,
-        contact: userDetails.contact,
-      },
-      handler: onSuccess,
-      modal: {
-        ondismiss: () => onFailure(new Error('Payment cancelled')),
-      },
-      theme: { color: '#7f1d1d' },
-    };
-
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
+    try {
+      const result = await cashfree.checkout({
+        paymentSessionId: order.paymentSessionId,
+        redirectTarget: '_modal',
+      });
+      if (result?.error) {
+        onFailure(new Error(result.error.message || 'Payment failed'));
+        return;
+      }
+      onSuccess();
+    } catch (error) {
+      onFailure(error instanceof Error ? error : new Error('Payment failed'));
+    }
   }
 }
 

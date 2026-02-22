@@ -37,6 +37,7 @@ const BookConsultation = () => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
+    phone: '',
     birthDate: '',
     birthTime: '',
     birthPlace: '',
@@ -120,8 +121,18 @@ const BookConsultation = () => {
       toast.error('Please select a service');
       return;
     }
-
-    if (!formData.name || !formData.email || !formData.birthDate || !formData.birthTime || !formData.birthPlace || !formData.gender || !formData.maritalStatus || !formData.education || !formData.profession) {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.birthDate ||
+      !formData.birthTime ||
+      !formData.birthPlace ||
+      !formData.gender ||
+      !formData.maritalStatus ||
+      !formData.education ||
+      !formData.profession
+    ) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -142,26 +153,18 @@ const BookConsultation = () => {
       }
 
       // Process payment and create consultation
-      const { consultationId, order, keyId } = await paymentService.processConsultationPayment(
+      const { consultationId, order } = await paymentService.processConsultationPayment(
         user.id,
         service.id,
         formData
       );
 
-      // Open Razorpay checkout
+      // Open Cashfree checkout
       await paymentService.openCheckout(
         order,
-        { name: formData.name, email: formData.email },
-        keyId,
-        async (response) => {
+        async () => {
           // Payment success callback
-          const confirmed = await paymentService.confirmPayment(
-            consultationId,
-            response.razorpay_payment_id,
-            response.razorpay_order_id,
-            response.razorpay_signature
-          );
-
+          const confirmed = await paymentService.confirmPayment(consultationId, order.orderId);
           if (confirmed) {
             toast.success('Payment successful! Your consultation has been booked.');
             router.push('/dashboard/consultations');
@@ -267,6 +270,18 @@ const BookConsultation = () => {
                         required
                       />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone *</Label>
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="10-digit mobile number"
+                      required
+                    />
                   </div>
                 </div>
 
@@ -475,7 +490,7 @@ const BookConsultation = () => {
 
                   <div className="text-center text-sm text-stone-500">
                     <p>Secure payment powered by</p>
-                    <p className="font-semibold text-stone-700">Razorpay</p>
+                    <p className="font-semibold text-stone-700">Cashfree</p>
                   </div>
                 </div>
               ) : (
