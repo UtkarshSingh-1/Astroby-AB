@@ -22,3 +22,5 @@ Thumbs.db
 
 # misc
 *.local
+*.tsbuildinfo
+tsconfig.tsbuildinfo
