@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const FALLBACK_SITE_URL = 'https://astroby-ab-sy16.vercel.app';
+const FALLBACK_SITE_URL = 'https://www.astrobyab.in';
 
 function getBaseUrl(): string {
   const configured =

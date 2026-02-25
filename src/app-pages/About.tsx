@@ -5,9 +5,9 @@ import { Star, Award, BookOpen, Users, Heart, Sparkles } from 'lucide-react';
 
 const About = () => {
   const achievements = [
-    { number: '25+', label: 'Years of Experience' },
-    { number: '10K+', label: 'Happy Clients' },
-    { number: '50K+', label: 'Kundlis Generated' },
+    { number: '5+', label: 'Years of Experience' },
+    { number: '600+', label: 'Happy Clients' },
+    { number: '400+', label: 'Kundlis Generated' },
     { number: '4.9', label: 'Average Rating' },
   ];
 
@@ -86,7 +86,7 @@ const About = () => {
             >
               <p className="text-red-900 font-medium mb-2">Our Story</p>
               <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-6">
-                A Journey of 25+ Years in Vedic Astrology
+                A Journey of 5+ Years in Vedic Astrology
               </h2>
               <div className="space-y-4 text-stone-600">
                 <p>

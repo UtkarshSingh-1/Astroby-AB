@@ -60,6 +60,9 @@ const Footer = () => {
               Guiding souls through the cosmic wisdom of Vedic astrology. 
               Discover your destiny with authentic astrological insights.
             </p>
+            <p className="text-red-300 text-xs">
+              AstrobyAB (also written as Astro By AB)
+            </p>
             <div className="flex gap-3">
               <a
                 href="#"

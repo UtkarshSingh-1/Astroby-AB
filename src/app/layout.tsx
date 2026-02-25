@@ -2,7 +2,7 @@ import '../index.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'AstrobyAB',
+  title: 'AstrobyAB – Vedic Astrology Consultation by Acharya AB',
   description: 'Vedic astrology services and consultations',
   icons: {
     icon: '/logo.jpeg',

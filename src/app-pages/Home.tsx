@@ -107,9 +107,9 @@ const Hero = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           {[
-            { value: '500+', label: 'Happy Clients' },
+            { value: '600+', label: 'Happy Clients' },
             { value: '5+', label: 'Years Experience' },
-            { value: '600+', label: 'Kundlis Generated' },
+            { value: '400+', label: 'Kundlis Generated' },
             { value: '4.9', label: 'Rating' },
           ].map((stat, index) => (
             <div key={index} className="text-center">
@@ -234,7 +234,7 @@ const WhyChooseUs = () => {
     {
       icon: User,
       title: 'Expert Guidance',
-      description: '25+ years of experience in Vedic astrology and KP system.',
+      description: '5+ years of experience in Vedic astrology and KP system.',
     },
     {
       icon: CheckCircle,
@@ -329,7 +329,7 @@ const CTASection = () => {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Get Your First Consultation FREE
+            Get Your First Consultation
           </h2>
           <p className="text-red-200 text-lg mb-8">
             New users get a complimentary 15-minute consultation.
@@ -338,7 +338,7 @@ const CTASection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/signup">
               <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-red-950 font-semibold px-8">
-                Claim Free Consultation
+                Claim First Consultation
               </Button>
             </Link>
             <Link href="/contact">
