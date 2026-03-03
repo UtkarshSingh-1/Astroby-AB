@@ -274,37 +274,7 @@ const ServiceDetail = ({ slug }: { slug: string }) => {
         </div>
       </section>
 
-      {/* Related Services */}
-      <section className="py-12 bg-white border-t border-stone-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold text-stone-900 mb-8">You May Also Like</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { name: 'Yearly Horoscope', price: 799, icon: Calendar },
-              { name: 'Career Guidance', price: 1299, icon: Briefcase },
-              { name: 'Health Astrology', price: 1199, icon: Activity },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-stone-50 rounded-xl p-6 hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => router.push('/services')}
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                    <item.icon className="h-5 w-5 text-red-900" />
-                  </div>
-                  <h3 className="font-semibold text-stone-900">{item.name}</h3>
-                </div>
-                <p className="text-red-900 font-bold">₹{item.price}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
     </div>
   );
 };

@@ -12,7 +12,8 @@
     "prisma:seed": "prisma db seed",
     "prisma:clear-services": "prisma db execute --schema prisma/schema.prisma --file prisma/clear-services.sql",
     "prisma:clear-consultations": "prisma db execute --schema prisma/schema.prisma --file prisma/clear-consultations.sql",
-    "prisma:normalize-slugs": "tsx prisma/normalize-slugs.ts"
+    "prisma:normalize-slugs": "tsx prisma/normalize-slugs.ts",
+    "db:migrate:railway-to-neon": "node scripts/migrate-railway-to-neon.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
